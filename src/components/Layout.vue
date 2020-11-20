@@ -1,10 +1,26 @@
 <template>
   <div>
-      <div class="header">头部</div>
-      <div class="navbar">左侧导航</div>
-      <div class="main">主区域</div>
+      <app-header></app-header>
+      <app-navbar></app-navbar>
+      <app-main></app-main>
+      
+      
   </div>
 </template>
+
+<script>
+
+import AppHeader from './AppHeader'
+import AppNavbar from './AppNavbar'
+import AppMain from './AppMain'
+export default {
+    components:{
+        AppHeader,
+        AppNavbar,
+        AppMain
+    }
+}
+</script>
 
 <style scoped>
 .header{
@@ -13,12 +29,12 @@
     top: 0px;
     left: 0px;
     right: 0px;
-    background-color: red;
+    background-color: black;
 }
 .navbar{
     position: absolute;
     top: 50px;
-    background-color: blue;
+    background-color: grey;
     width: 230px;
     left: 0px;
     bottom: 0px;
@@ -33,7 +49,6 @@
     bottom: 0px;
     padding: 10px;
     overflow-y: auto;
-    background-color: green;
 }
 </style>
 

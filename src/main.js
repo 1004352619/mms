@@ -7,7 +7,11 @@ import App from "./App.vue";
 import router from "./router";
 import ElementUI from "element-ui";
 
+// 使用ElementUI
 Vue.use(ElementUI)
+
+//权限拦截
+import './permission' 
 
 Vue.config.productionTip = process.env.NODE_ENV==='production';
 console.log(process.env.NODE_ENV)//开发环境development 生产环境production不 
