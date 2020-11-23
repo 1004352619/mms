@@ -154,9 +154,9 @@ export default {
       goodsApi
         .search(this.currentPage, this.pageSize, this.searchMap)
         .then((response) => {
-          const data = response.data.data;
-          this.list = data.rows;
-          this.total = data.total;
+          const resp = response.data.data;
+          this.list = resp.rows;
+          this.total = resp.total;
           // console.log(data.rows)
         });
     },
@@ -209,7 +209,8 @@ export default {
               }else{
                   this.$message({
                       message:resp.message,
-                      type:'warning'
+                      type:'warning',
+                      duration:2000
                   })
               }
           })

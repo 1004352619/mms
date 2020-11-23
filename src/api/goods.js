@@ -35,5 +35,11 @@ export default{
             url:`/goods/${id}`,
             method:'delete',
         })
+    },
+    updateStaff(id){
+        return request({
+            url:`/goods/${id}`,
+            method:'delete',
+        })
     }
 }
