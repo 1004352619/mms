@@ -8,29 +8,36 @@
         <!-- style="width=200" 按需调整宽度 -->
         <el-input v-model="searchMap.name" placeholder="供应商名称"></el-input>
       </el-form-item>
-      <el-form-item prop="linkman">
+      <el-form-item prop="linkman" v-if="!isDialog">
         <el-input v-model="searchMap.linkman" placeholder="联系人"></el-input>
       </el-form-item>
-      <el-form-item prop="mobile">
+      <el-form-item prop="mobile" v-if="!isDialog">
         <el-input v-model="searchMap.mobile" placeholder="联系电话"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="fetchData">查询</el-button>
-        <el-button type="primary" @click="handleAdd">新增</el-button>
-        <el-button @click="resetForm('searchForm')">重置</el-button>
+        <el-button type="primary" v-if="!isDialog" @click="handleAdd">新增</el-button>
+        <el-button v-if="!isDialog" @click="resetForm('searchForm')">重置</el-button>
       </el-form-item>
     </el-form>
     <!-- 数据列表 -->
-    <el-table :data="list" height="450px" border style="width: 100%">
+    <!-- highlight-current-row激活单选行 
+        @current-change 当点击某一行后，会触发这个时间，从而调用对应的函数handleCurrentChange
+        handleCurrentChange函数会接收两个参数，currentRow,oldCurrentRow
+    -->
+    <el-table 
+    :highlight-current-row="isDialog"
+    @current-change="clickCurrentChange"
+    :data="list" height="450px" border style="width: 100%">
       <!-- type="index"获取索引值，从1开始，label显示标题,prop数据字段名
             width 列宽
       -->
       <el-table-column type="index" label="序号" width="50"></el-table-column>
-      <el-table-column prop="name" label="供应商名称" width="160"></el-table-column>
-      <el-table-column prop="linkman" label="联系人" width="80"></el-table-column>
-      <el-table-column prop="mobile" label="联系人电话" width="120"></el-table-column>
-      <el-table-column prop="remark" label="备注" width="150"></el-table-column>
-      <el-table-column label="操作" width="150">
+      <el-table-column prop="name" label="供应商名称" ></el-table-column>
+      <el-table-column prop="linkman" label="联系人"></el-table-column>
+      <el-table-column prop="mobile" v-if="!isDialog" label="联系人电话" width="150"></el-table-column>
+      <el-table-column prop="remark" v-if="!isDialog" label="备注"></el-table-column>
+      <el-table-column v-if="!isDialog" label="操作" width="150">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row.id)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
@@ -39,19 +46,21 @@
     </el-table>
     <!-- 分页组件 -->
     <el-pagination
+      :layout="!isDialog ?'total, sizes, prev, pager, next, jumper':'prev, pager, next'"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
       :page-sizes="[10, 20, 50]"
       :page-size="pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
     <!-- 弹出新增窗口
     title 窗口的标题
     :visible.sync 当他为true时，窗口会被弹出
     -->
-    <el-dialog title="供应商编辑" :visible.sync="dialogFormVisible" width="500px">
+    <el-dialog 
+    v-if="!isDialog"
+    title="供应商编辑" :visible.sync="dialogFormVisible" width="500px">
       <el-form
         :rules="rules"
         ref="pojoForm"
@@ -89,6 +98,11 @@
 import supplierApi from "@/api/supplier";
 
 export default {
+  props: {
+    // 接收父组件传递过来的数据，就通过isDialog来判断是否为弹出框
+    // 如果为true，则弹窗，false就是列表
+    isDialog: Boolean,
+  },
   data() {
     return {
       list: [],
@@ -160,21 +174,23 @@ export default {
       this.$confirm("确认删除这条记录吗？", "提示", {
         confirmButtonText: "确认",
         cancleButtonText: "取消",
-      }).then(() => {
-        supplierApi.deleteById(id).then((response) => {
-          const resp = response.data;
-          this.$message({
-                message: resp.message,
-                type: resp.flag?'success':'error',
-              });
-          if (resp.flag) {
-            // 删除成功，刷新数据
-            this.fetchData();
-          }
-        });
-      }).catch(()=>{
-        // 取消失败
       })
+        .then(() => {
+          supplierApi.deleteById(id).then((response) => {
+            const resp = response.data;
+            this.$message({
+              message: resp.message,
+              type: resp.flag ? "success" : "error",
+            });
+            if (resp.flag) {
+              // 删除成功，刷新数据
+              this.fetchData();
+            }
+          });
+        })
+        .catch(() => {
+          // 取消失败
+        });
     },
     // 当每页显示条数改变，进行调用该方法，val是当前改变后的条数
     handleSizeChange(val) {
@@ -245,6 +261,14 @@ export default {
         }
       });
     },
+    // 当点击某一行时，会调用这个函数进行处理
+    clickCurrentChange(currentRow){
+      // console.log(currentRow)
+      // 点击后，要将点击的数据传递到父组件（商品管理中）
+      // 则可以通过触发父组件中的option-supplier
+      // 触发之后，父组件可以在option-supplie这个事件对应的处理函数中进行接收数据
+      this.$emit('option-supplier',currentRow)
+    }
   },
 };
 </script>
