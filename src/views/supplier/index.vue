@@ -208,6 +208,7 @@ export default {
     // 新增弹窗
     handleAdd() {
       (this.dialogFormVisible = true),
+      
         this.$nextTick(() => {
           //  this.$nextTick()是一个异步事件，当渲染结束之后，它的回调函数才会被执行
           // 弹出窗口打开后，需要加载Dom，需要花费一些时间

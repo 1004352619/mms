@@ -170,6 +170,7 @@ export default {
     },
     // 新增员工窗口
     handleAdd() {
+      this.pojo.id=null  
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         //  this.$nextTick()是一个异步事件，当渲染结束之后，它的回调函数才会被执行

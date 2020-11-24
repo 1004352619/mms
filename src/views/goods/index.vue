@@ -206,6 +206,11 @@ export default {
               if(resp.flag){
                   this.fetchData()
                   this.dialogFormVisible=false
+                  this.$message({
+                      message:"添加成功",
+                      type:'success',
+                      duration:2000
+                  })
               }else{
                   this.$message({
                       message:resp.message,
@@ -231,6 +236,10 @@ export default {
                         // 修改成功，刷新数据,关闭窗口
                         this.fetchData()
                         this.dialogFormVisible=false
+                         this.$message({
+                            message:"修改成功",
+                            type:'success'
+                        })
                     }else{
                         this.$message({
                             message:resp.message,
